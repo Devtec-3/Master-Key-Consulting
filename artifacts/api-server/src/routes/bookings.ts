@@ -8,6 +8,7 @@ import {
   ListBookingsResponse,
   UpdateBookingResponse,
 } from "@workspace/api-zod";
+import { sendBookingNotification } from "../lib/mailer";
 
 const router: IRouter = Router();
 
@@ -32,6 +33,19 @@ router.post("/bookings", async (req, res): Promise<void> => {
     .insert(bookingsTable)
     .values({ ...parsed.data, status: "new" })
     .returning();
+
+  sendBookingNotification({
+    id: booking.id,
+    fullName: booking.fullName,
+    phone: booking.phone,
+    email: booking.email,
+    location: booking.location,
+    serviceType: booking.serviceType,
+    preferredDate: booking.preferredDate,
+    message: booking.message,
+    howHeard: booking.howHeard ?? undefined,
+  }).catch((err) => req.log.error({ err }, "Failed to send booking notification email"));
+
   res.status(201).json({
     ...booking,
     createdAt: booking.createdAt.toISOString(),
