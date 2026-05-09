@@ -10,6 +10,7 @@ import {
   ListAllReviewsResponse,
   UpdateReviewResponse,
 } from "@workspace/api-zod";
+import { sendReviewNotification } from "../lib/mailer";
 
 const router: IRouter = Router();
 
@@ -46,6 +47,16 @@ router.post("/reviews", async (req, res): Promise<void> => {
     .insert(reviewsTable)
     .values({ ...parsed.data, approved: false })
     .returning();
+
+  sendReviewNotification({
+    id: review.id,
+    name: review.name,
+    location: review.location,
+    service: review.service,
+    rating: review.rating,
+    comment: review.comment,
+  }).catch((err) => req.log.error({ err }, "Failed to send review notification email"));
+
   res.status(201).json({
     ...review,
     createdAt: review.createdAt.toISOString(),
