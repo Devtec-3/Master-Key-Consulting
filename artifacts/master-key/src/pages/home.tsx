@@ -4,9 +4,10 @@ import { ChevronDown, MapPin, Star, ArrowRight, CheckCircle2 } from "lucide-reac
 import { Button } from "@/components/ui/button";
 import { useListFeaturedProjects, useListReviews, useListBlogPosts } from "@workspace/api-client-react";
 import heroBg from "@/assets/images/hero-bg.png";
-import project1 from "@/assets/images/project-1.png";
 import blog1 from "@/assets/images/blog-1.png";
 import blog2 from "@/assets/images/blog-2.png";
+import flyer from "@/assets/images/flyer.jpeg";
+import businessCard from "@/assets/images/business-card.jpeg";
 
 const services = [
   { title: "Geophysical Survey", desc: "Accurate subsurface mapping using advanced geophysical methods", icon: "🌍" },
@@ -175,47 +176,150 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Why Choose Us */}
-      <section className="py-24 bg-white" data-testid="section-why">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -40 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
-              className="relative"
-            >
-              <img src={project1} alt="Field work" className="w-full h-[500px] object-cover" />
-              <div className="absolute bottom-6 left-6 bg-primary text-white px-6 py-4">
-                <div className="font-heading font-bold text-xl">Muhammad Abdulrahman Alata</div>
-                <div className="font-label text-xs uppercase tracking-wider text-accent">Geologist & Founder</div>
-              </div>
-            </motion.div>
-            <motion.div
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true }}
-              variants={stagger}
-            >
-              <motion.span variants={fadeUp} className="font-label text-primary text-sm uppercase tracking-[0.3em]">Why Choose Us</motion.span>
-              <motion.h2 variants={fadeUp} className="font-heading font-bold text-4xl md:text-5xl mt-2 mb-8 text-[#0A0A0A]">
-                Experience You Can Trust
-              </motion.h2>
-              <motion.div variants={stagger} className="space-y-4">
-                {reasons.map((reason) => (
-                  <motion.div key={reason} variants={fadeUp} className="flex items-start gap-4">
-                    <CheckCircle2 className="w-6 h-6 text-primary shrink-0 mt-0.5" />
-                    <p className="text-[#1A1A1A] leading-relaxed">{reason}</p>
-                  </motion.div>
-                ))}
+      {/* About Us */}
+      <section className="py-0 bg-white overflow-hidden" id="about" data-testid="section-about">
+        {/* Top: founder intro — dark panel */}
+        <div className="bg-[#0A0A0A]">
+          <div className="container mx-auto px-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[560px]">
+              {/* Left — flyer image */}
+              <motion.div
+                className="relative overflow-hidden min-h-[360px] lg:min-h-0"
+                initial={{ opacity: 0, x: -60 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8 }}
+              >
+                <img
+                  src={flyer}
+                  alt="Master Key Consulting — Field Operations"
+                  className="w-full h-full object-cover object-center opacity-90"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#0A0A0A]/60" />
+                {/* Gold accent bar */}
+                <div className="absolute left-0 top-0 bottom-0 w-1 bg-accent" />
               </motion.div>
-              <motion.div variants={fadeUp} className="mt-10">
-                <Button asChild className="bg-primary hover:bg-secondary text-white font-bold uppercase tracking-wider rounded-none px-8 py-6">
-                  <Link href="/contact">Get in Touch</Link>
-                </Button>
+
+              {/* Right — bio */}
+              <motion.div
+                className="flex flex-col justify-center px-8 py-16 lg:px-16"
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true }}
+                variants={stagger}
+              >
+                <motion.span variants={fadeUp} className="font-label text-accent text-xs uppercase tracking-[0.35em] mb-4">
+                  About Master Key Consulting
+                </motion.span>
+                <motion.h2 variants={fadeUp} className="font-heading font-black text-4xl md:text-5xl text-white leading-tight mb-6">
+                  Meet the Geologist Behind the Name
+                </motion.h2>
+                <motion.p variants={fadeUp} className="text-gray-300 leading-relaxed mb-4">
+                  Master Key Consulting was founded by <span className="text-white font-semibold">Muhammad Abdulrahman Alata</span>, a certified geologist based in Ilorin, Kwara State. Muhammad brings hands-on field experience across multiple Nigerian states, combining scientific rigour with a practical, client-first approach to every engagement.
+                </motion.p>
+                <motion.p variants={fadeUp} className="text-gray-400 leading-relaxed mb-8">
+                  From identifying aquifer zones before a single metre of borehole is drilled, to delineating mineral deposits for investors, to providing geotechnical data that saves construction projects from costly errors — the firm exists to unlock the economic value hidden beneath Nigeria's diverse geology.
+                </motion.p>
+
+                {/* Pull quote */}
+                <motion.blockquote
+                  variants={fadeUp}
+                  className="border-l-4 border-accent pl-5 mb-8"
+                >
+                  <p className="text-accent italic text-lg leading-relaxed">
+                    "We don't just run surveys — we give our clients the certainty they need to act."
+                  </p>
+                  <footer className="text-gray-500 text-sm mt-2 font-label uppercase tracking-wider">
+                    — Muhammad Abdulrahman Alata, Geologist & Founder
+                  </footer>
+                </motion.blockquote>
+
+                <motion.div variants={fadeUp} className="flex flex-wrap gap-3">
+                  <Button asChild className="bg-accent hover:bg-accent/90 text-black font-bold uppercase tracking-wider rounded-none px-6">
+                    <Link href="/booking">Book a Consultation</Link>
+                  </Button>
+                  <Button asChild variant="outline" className="border-white/30 text-white hover:bg-white/10 rounded-none px-6 font-bold uppercase tracking-wider">
+                    <Link href="/portfolio">View Our Work</Link>
+                  </Button>
+                </motion.div>
               </motion.div>
-            </motion.div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom: credentials + business card — white panel */}
+        <div className="bg-white">
+          <div className="container mx-auto px-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 items-stretch">
+              {/* Credentials */}
+              <motion.div
+                className="py-16 pr-0 lg:pr-16 border-b lg:border-b-0 lg:border-r border-border"
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true }}
+                variants={stagger}
+              >
+                <motion.span variants={fadeUp} className="font-label text-primary text-xs uppercase tracking-[0.35em]">
+                  Credentials & Approach
+                </motion.span>
+                <motion.h3 variants={fadeUp} className="font-heading font-bold text-3xl text-[#0A0A0A] mt-2 mb-10">
+                  Experience You Can Trust
+                </motion.h3>
+                <motion.div variants={stagger} className="space-y-5">
+                  {reasons.map((reason) => (
+                    <motion.div key={reason} variants={fadeUp} className="flex items-start gap-4 group">
+                      <div className="w-8 h-8 bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary transition-colors duration-300">
+                        <CheckCircle2 className="w-4 h-4 text-primary group-hover:text-white transition-colors duration-300" />
+                      </div>
+                      <p className="text-[#1A1A1A] leading-relaxed pt-1">{reason}</p>
+                    </motion.div>
+                  ))}
+                </motion.div>
+
+                {/* Mini stats row */}
+                <motion.div variants={fadeUp} className="grid grid-cols-3 gap-4 mt-12 pt-8 border-t border-border">
+                  {[
+                    { value: "6+", label: "Services" },
+                    { value: "100%", label: "Satisfaction" },
+                    { value: "24h", label: "Response" },
+                  ].map((s) => (
+                    <div key={s.label} className="text-center">
+                      <div className="font-heading font-black text-3xl text-primary">{s.value}</div>
+                      <div className="font-label text-xs uppercase tracking-wider text-muted-foreground mt-1">{s.label}</div>
+                    </div>
+                  ))}
+                </motion.div>
+              </motion.div>
+
+              {/* Business card */}
+              <motion.div
+                className="py-16 lg:pl-16 flex flex-col justify-center"
+                initial={{ opacity: 0, x: 40 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.7, delay: 0.2 }}
+              >
+                <span className="font-label text-muted-foreground text-xs uppercase tracking-[0.35em] mb-6">Our Business Card</span>
+                <div className="relative">
+                  <img
+                    src={businessCard}
+                    alt="Master Key Consulting Business Card"
+                    className="w-full rounded-sm shadow-2xl"
+                  />
+                  {/* Decorative corner accent */}
+                  <div className="absolute -bottom-3 -right-3 w-16 h-16 bg-primary opacity-20" />
+                  <div className="absolute -top-3 -left-3 w-10 h-10 bg-accent opacity-30" />
+                </div>
+                <p className="text-muted-foreground text-sm mt-8 leading-relaxed">
+                  Based at <span className="text-[#0A0A0A] font-medium">Alfurqan Compound, Gbagba, Ilorin, Kwara State</span>. Serving clients across all geopolitical zones of Nigeria.
+                </p>
+                <div className="mt-6">
+                  <Button asChild variant="outline" className="rounded-none border-primary text-primary hover:bg-primary hover:text-white font-bold uppercase tracking-wider transition-colors">
+                    <Link href="/contact">Get Our Contact Details</Link>
+                  </Button>
+                </div>
+              </motion.div>
+            </div>
           </div>
         </div>
       </section>
