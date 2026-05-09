@@ -1,0 +1,32 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "Pdq76nLVaIxuCOKrhCysl"
+uri = "file://artifacts/master-key/src/assets/images/hero-bg.png"
+type = "image"
+title = "Hero background geology equipment"
+
+[[generated]]
+id = "ZB7yNPlZyjO60P1hI7s0n"
+uri = "file://artifacts/master-key/src/assets/images/project-1.png"
+type = "image"
+title = "Geological fieldwork surveying"
+
+[[generated]]
+id = "ONtrZJIJCygLK4ZGd16Xm"
+uri = "file://artifacts/master-key/src/assets/images/project-2.png"
+type = "image"
+title = "Borehole drilling site"
+
+[[generated]]
+id = "ZuYo5NLcRp2PGChLBYW50"
+uri = "file://artifacts/master-key/src/assets/images/blog-1.png"
+type = "image"
+title = "Blog post cover minerals"
+
+[[generated]]
+id = "Qz8gGxo_rT0fUqeGS3XKy"
+uri = "file://artifacts/master-key/src/assets/images/blog-2.png"
+type = "image"
+title = "Blog post cover geotechnical"

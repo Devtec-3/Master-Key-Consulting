@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Master Key Consulting"
+version = "1.0.0"
+id = "artifacts/master-key"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 23657
+
+[services.development]
+run = "pnpm --filter @workspace/master-key run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/master-key", "run", "build" ]
+publicDir = "artifacts/master-key/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "23657"
+BASE_PATH = "/"

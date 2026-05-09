@@ -1,0 +1,825 @@
+# 🏗️ MASTER KEY CONSULTING — COMPLETE MVP BUILD PROMPT
+
+### For Cursor / Windsurf / Lovable / v0
+
+-----
+
+## PROJECT OVERVIEW
+
+Build a professional, full-featured business website for **Master Key Consulting** — a geophysical and engineering services firm based in Ilorin, Kwara State, Nigeria, led by Geologist **Muhammad Abdulrahman Alata**.
+
+The website must serve as a **brand hub + lead generation + booking engine** — allowing clients to discover services, view past work, submit bookings (sent directly to email), leave reviews, and read field updates — all hosted and run **completely for free**.
+
+-----
+
+## CLIENT DETAILS (Use exactly as shown)
+
+- **Business Name:** Master Key Consulting
+- **Tagline:** Geophysical and Engineering Services
+- **Geologist / Founder:** Muhammad Abdulrahman Alata
+- **Phone 1:** 09065314977
+- **Phone 2:** 09153448154
+- **Email:** Muhammadabdulrahmanalata@gmail.com
+- **Address:** Alfurqan Compound, Gbagba, Ilorin, Kwara State, Nigeria
+- **Services:**
+1. Geophysical Survey
+1. Mineral Resources Exploration
+1. Mining of Industrial Minerals, Gemstones & Metallic Ores
+1. Borehole Drilling, Installation & Maintenance
+1. Geotechnical Investigation & Overhead Tank Erection
+1. Consultation
+
+-----
+
+## BRAND / DESIGN SYSTEM
+
+### Color Palette (extract from business card)
+
+```css
+--brand-red: #CC0000;
+--brand-dark-red: #8B0000;
+--brand-gold: #C9A84C;
+--brand-black: #0A0A0A;
+--brand-white: #FFFFFF;
+--brand-gray: #F5F5F5;
+--text-dark: #1A1A1A;
+--text-muted: #666666;
+```
+
+### Typography
+
+```
+Display / Headings: "Playfair Display" (Google Fonts) — bold, premium
+Body: "DM Sans" (Google Fonts) — clean, readable
+Accent: "Oswald" — for labels, tags, service titles
+```
+
+### Aesthetic Direction
+
+- **Industrial + Premium** — like a luxury mining firm meets Nigerian professionalism
+- Bold red diagonal accents (matching the business card chevrons)
+- Dark sections contrast with clean white sections
+- Gold accent used sparingly for highlights, CTAs, and borders
+- Wide-angle geology/field photography backgrounds
+- Clean cards with subtle red-left-border on hover
+
+-----
+
+## TECH STACK (All Free)
+
+|Layer                        |Tool                                                         |
+|-----------------------------|-------------------------------------------------------------|
+|Frontend                     |React + Vite                                                 |
+|Styling                      |TailwindCSS v3                                               |
+|Animation                    |Framer Motion                                                |
+|Database                     |Firebase Firestore (free tier)                               |
+|Email (booking notifications)|EmailJS (free — 200 emails/month)                            |
+|Image Storage                |Firebase Storage (free tier)                                 |
+|Auth (admin panel)           |Firebase Auth (email/password)                               |
+|Hosting                      |Vercel (free)                                                |
+|Domain                       |Vercel subdomain (free) e.g. `masterkeyconsulting.vercel.app`|
+
+-----
+
+## PROJECT STRUCTURE
+
+```
+masterkey-consulting/
+├── public/
+│   └── assets/
+│       ├── logo.png              ← upload from business card images
+│       └── hero-bg.jpg           ← field/geology photo
+├── src/
+│   ├── components/
+│   │   ├── Navbar.jsx
+│   │   ├── Footer.jsx
+│   │   ├── ServiceCard.jsx
+│   │   ├── ProjectCard.jsx
+│   │   ├── ReviewCard.jsx
+│   │   ├── ReviewForm.jsx
+│   │   ├── BookingForm.jsx
+│   │   ├── BlogPostCard.jsx
+│   │   └── WhatsAppButton.jsx
+│   ├── pages/
+│   │   ├── Home.jsx
+│   │   ├── Services.jsx
+│   │   ├── Portfolio.jsx
+│   │   ├── Reviews.jsx
+│   │   ├── Blog.jsx
+│   │   ├── BlogPost.jsx
+│   │   ├── BookingPage.jsx
+│   │   ├── Contact.jsx
+│   │   └── admin/
+│   │       ├── AdminLogin.jsx
+│   │       ├── AdminDashboard.jsx
+│   │       ├── AdminProjects.jsx
+│   │       └── AdminBlog.jsx
+│   ├── firebase/
+│   │   └── config.js
+│   ├── App.jsx
+│   ├── main.jsx
+│   └── index.css
+├── .env
+├── vite.config.js
+└── package.json
+```
+
+-----
+
+## STEP 1 — PROJECT SETUP
+
+```bash
+npm create vite@latest masterkey-consulting -- --template react
+cd masterkey-consulting
+npm install
+npm install tailwindcss@3 postcss autoprefixer framer-motion react-router-dom firebase emailjs-com react-hot-toast react-icons react-stars lucide-react
+npx tailwindcss init -p
+```
+
+### tailwind.config.js
+
+```js
+export default {
+  content: ["./index.html", "./src/**/*.{js,jsx}"],
+  theme: {
+    extend: {
+      colors: {
+        red: { brand: "#CC0000", dark: "#8B0000" },
+        gold: { DEFAULT: "#C9A84C" },
+      },
+      fontFamily: {
+        display: ["Playfair Display", "serif"],
+        body: ["DM Sans", "sans-serif"],
+        accent: ["Oswald", "sans-serif"],
+      },
+    },
+  },
+  plugins: [],
+};
+```
+
+### index.css — Add Google Fonts
+
+```css
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600&family=Oswald:wght@400;600&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --brand-red: #CC0000;
+  --brand-dark-red: #8B0000;
+  --brand-gold: #C9A84C;
+}
+
+body {
+  font-family: "DM Sans", sans-serif;
+}
+
+h1, h2, h3 {
+  font-family: "Playfair Display", serif;
+}
+```
+
+-----
+
+## STEP 2 — FIREBASE SETUP
+
+### src/firebase/config.js
+
+```js
+import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+import { getStorage } from "firebase/storage";
+
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+};
+
+const app = initializeApp(firebaseConfig);
+
+export const db = getFirestore(app);
+export const auth = getAuth(app);
+export const storage = getStorage(app);
+```
+
+### .env
+
+```env
+VITE_FIREBASE_API_KEY=your_key
+VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+VITE_FIREBASE_APP_ID=your_app_id
+VITE_EMAILJS_SERVICE_ID=your_emailjs_service_id
+VITE_EMAILJS_TEMPLATE_ID=your_emailjs_template_id
+VITE_EMAILJS_PUBLIC_KEY=your_emailjs_public_key
+```
+
+-----
+
+## STEP 3 — FIRESTORE DATABASE SCHEMA
+
+### Collection: `reviews`
+
+```
+reviews/{reviewId}
+  - name: string         // Client name
+  - location: string     // e.g. "Abuja, FCT"
+  - rating: number       // 1–5
+  - comment: string      // Review text
+  - service: string      // Which service they used
+  - approved: boolean    // Admin must approve before showing publicly
+  - createdAt: timestamp
+```
+
+### Collection: `projects` (Portfolio)
+
+```
+projects/{projectId}
+  - title: string
+  - location: string
+  - serviceType: string  // e.g. "Borehole Drilling"
+  - description: string
+  - date: string         // e.g. "March 2025"
+  - imageURL: string     // Firebase Storage URL
+  - featured: boolean
+  - createdAt: timestamp
+```
+
+### Collection: `blog`
+
+```
+blog/{postId}
+  - title: string
+  - slug: string         // URL-friendly e.g. "survey-at-ekiti-mine"
+  - content: string      // Rich text / Markdown
+  - coverImageURL: string
+  - tags: array          // e.g. ["mineral exploration", "kwara"]
+  - published: boolean
+  - createdAt: timestamp
+```
+
+### Collection: `bookings`
+
+```
+bookings/{bookingId}
+  - fullName: string
+  - email: string
+  - phone: string
+  - location: string     // Where they want the work done
+  - serviceType: string
+  - preferredDate: string
+  - message: string      // Details about the job
+  - status: string       // "new" | "contacted" | "completed"
+  - createdAt: timestamp
+```
+
+-----
+
+## STEP 4 — EMAILJS SETUP (Booking Notifications)
+
+1. Go to emailjs.com → create free account
+1. Add Email Service → connect to Muhammadabdulrahmanalata@gmail.com
+1. Create Email Template with this content:
+
+```
+Subject: 🔔 New Booking Request — Master Key Consulting
+
+New booking received!
+
+Name: {{from_name}}
+Phone: {{phone}}
+Email: {{from_email}}
+Location: {{location}}
+Service Requested: {{service_type}}
+Preferred Date: {{preferred_date}}
+
+Message:
+{{message}}
+
+---
+Sent via Master Key Consulting website
+```
+
+1. Copy your Service ID, Template ID, and Public Key into `.env`
+
+-----
+
+## STEP 5 — PAGE-BY-PAGE IMPLEMENTATION
+
+-----
+
+### 📄 Navbar.jsx
+
+**Behavior:**
+
+- Fixed top, transparent on hero → solid dark red on scroll
+- Logo (Master Key Consulting text + icon) on left
+- Nav links: Home | Services | Portfolio | Reviews | Blog | Book Now | Contact
+- “Book Now” is a gold CTA button
+- Mobile: hamburger menu with slide-down drawer
+- Use `useEffect` + scroll listener for background transition
+
+-----
+
+### 📄 Home.jsx — Sections in order:
+
+**1. Hero Section**
+
+- Full-viewport background: dark geology field photo with a red diagonal overlay at 20% opacity
+- Large white heading: `"Unlocking the Earth's Potential"`
+- Subheading: `"Geophysical surveys, mineral exploration, and borehole drilling across Nigeria"`
+- Two CTA buttons: `[Book a Service]` (gold) + `[View Our Work]` (outlined white)
+- Animated entrance with Framer Motion (fade up, stagger)
+- Scroll-down chevron indicator
+
+**2. Stats Bar**
+
+- Dark red background, 4 stats side by side:
+  - 6+ Services Offered
+  - 100% Client Satisfaction
+  - Based in Ilorin, Kwara State
+  - Always Available
+- Animated number count-up on scroll into view
+
+**3. Services Preview**
+
+- Section title: `"What We Do"`
+- Grid of 6 service cards (3 cols desktop, 2 tablet, 1 mobile)
+- Each card: red icon, service name, 1-line description, “Learn More →” link
+- Left red border on hover, subtle lift shadow
+
+**Services list:**
+
+```
+1. Geophysical Survey — Accurate subsurface mapping using advanced geophysical methods
+2. Mineral Resources Exploration — Identifying and assessing viable mineral deposits
+3. Industrial Minerals & Ore Mining — Extraction of gemstones, metallic and industrial minerals
+4. Borehole Drilling & Maintenance — Professional drilling, casing, and pump installation
+5. Geotechnical Investigation — Soil and subsurface analysis for construction projects
+6. Consultation — Expert geological guidance for your projects and investments
+```
+
+**4. Why Choose Us**
+
+- Split layout: left = image of field work, right = bullet list
+- Points:
+  - Certified Geologist with field experience
+  - Full service from survey to drilling
+  - Serving clients across Nigeria
+  - Fast response and reliable results
+  - Clear communication, no hidden fees
+
+**5. Portfolio Preview (3 Featured Projects)**
+
+- Pull from Firestore `projects` where `featured == true`, limit 3
+- Each card: image, location tag, service type tag, title, date
+- “View All Projects →” link
+
+**6. Testimonials Strip**
+
+- Pull from Firestore `reviews` where `approved == true`, limit 3
+- Star rating display, client name, location, comment
+- Gold star icons
+- “See All Reviews →” link
+
+**7. CTA Banner**
+
+- Full-width dark section with red diagonal accents
+- Text: `"Ready to start your project? We are always available."`
+- Button: `[Book a Consultation Now]` → /booking
+
+**8. Blog Preview**
+
+- 3 latest blog posts from Firestore
+- Card: cover image, date, title, tag, “Read More →”
+- “View All Updates →” link
+
+-----
+
+### 📄 Services.jsx
+
+- Hero banner: “Our Services” with subtitle
+- Detailed card for each of the 6 services:
+  - Large icon
+  - Full description paragraph
+  - List of what’s included
+  - “Book This Service →” button (links to /booking with `?service=` query param)
+- FAQ accordion at bottom (common geology questions)
+
+-----
+
+### 📄 Portfolio.jsx
+
+```jsx
+// Firestore query
+const q = query(collection(db, "projects"), orderBy("createdAt", "desc"));
+```
+
+- Filter tabs: All | Geophysical Survey | Borehole | Mineral Exploration | Geotechnical
+- Masonry-style image grid
+- Click → modal with full project details (location, service, description, image)
+- Loading skeleton while fetching
+
+-----
+
+### 📄 Reviews.jsx
+
+**Top half:** Display all approved reviews
+
+```jsx
+const q = query(
+  collection(db, "reviews"),
+  where("approved", "==", true),
+  orderBy("createdAt", "desc")
+);
+```
+
+- Star rating, name, location, service used, comment
+- Gold star icons (react-stars)
+- Average rating displayed at top
+
+**Bottom half:** Review submission form
+
+```
+Fields:
+- Your Name *
+- Your Location (City, State) *
+- Service You Used * [dropdown]
+- Rating * [star selector 1-5]
+- Your Review * [textarea]
+- [Submit Review] button
+```
+
+On submit → save to Firestore with `approved: false` → show toast “Thank you! Your review is pending approval.”
+
+-----
+
+### 📄 Blog.jsx
+
+- Grid of all published posts from Firestore where `published == true`
+- Each card: cover image, date, tags, title, excerpt, “Read More →”
+- Search bar to filter by title
+
+### 📄 BlogPost.jsx
+
+- Route: `/blog/:slug`
+- Fetch by slug from Firestore
+- Render full content (use `dangerouslySetInnerHTML` or a markdown renderer)
+- Share buttons: WhatsApp, Twitter/X, copy link
+- “← Back to Blog” link
+
+-----
+
+### 📄 BookingPage.jsx
+
+**This is the most important page.**
+
+```jsx
+import emailjs from "emailjs-com";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  try {
+    // 1. Save to Firestore
+    await addDoc(collection(db, "bookings"), {
+      ...formData,
+      status: "new",
+      createdAt: serverTimestamp(),
+    });
+
+    // 2. Send email notification via EmailJS
+    await emailjs.send(
+      import.meta.env.VITE_EMAILJS_SERVICE_ID,
+      import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+      {
+        from_name: formData.fullName,
+        from_email: formData.email,
+        phone: formData.phone,
+        location: formData.location,
+        service_type: formData.serviceType,
+        preferred_date: formData.preferredDate,
+        message: formData.message,
+      },
+      import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+    );
+
+    toast.success("Booking submitted! We will contact you shortly.");
+    resetForm();
+  } catch (err) {
+    toast.error("Something went wrong. Please try again.");
+  } finally {
+    setLoading(false);
+  }
+};
+```
+
+**Form Fields:**
+
+```
+- Full Name *
+- Email Address *
+- Phone Number *
+- Project Location * (where the work will be done)
+- Service Type * [dropdown with all 6 services]
+- Preferred Start Date *
+- Description of Work * [textarea — "Tell us about your project"]
+- How did you hear about us? [optional dropdown]
+```
+
+**After form:** Info box with:
+
+> “After submitting, Muhammad will review your request and contact you within 24 hours to discuss details and pricing.”
+
+**Below that:** Direct contact options:
+
+- 📞 Call: 09065314977 / 09153448154
+- 💬 WhatsApp button (opens wa.me/2349065314977)
+- 📧 Email: Muhammadabdulrahmanalata@gmail.com
+
+-----
+
+### 📄 Contact.jsx
+
+- Split layout: left = contact details + map embed (Google Maps iframe centered on Ilorin), right = simple contact form
+- Contact form sends via EmailJS (separate simpler template)
+- WhatsApp floating button (bottom-right corner on all pages)
+
+-----
+
+## STEP 6 — ADMIN PANEL
+
+**Route:** `/admin` — protected, only accessible after Firebase Auth login
+
+### AdminLogin.jsx
+
+- Email + password form
+- `signInWithEmailAndPassword(auth, email, password)`
+- On success → redirect to /admin/dashboard
+
+### AdminDashboard.jsx
+
+- Summary cards: Total Bookings | New Bookings | Published Posts | Pending Reviews
+- Quick links to each section
+
+### Admin — Bookings View
+
+- Table of all bookings from Firestore, sorted newest first
+- Columns: Name | Phone | Service | Location | Date | Status
+- Status dropdown per row: `new → contacted → completed`
+- Update status writes back to Firestore
+
+### Admin — Projects (Portfolio)
+
+- List of all projects with Edit / Delete
+- “Add New Project” form:
+  - Title, Location, Service Type, Description, Date
+  - Image upload → Firebase Storage → save URL to Firestore
+  - Toggle featured
+
+### Admin — Blog Posts
+
+- List of all posts with Published toggle, Edit, Delete
+- “New Post” form:
+  - Title, Content (textarea), Cover Image upload, Tags (comma-separated)
+  - Slug auto-generated from title
+  - Publish toggle
+
+### Admin — Reviews
+
+- List of all reviews with `approved: false` first
+- Approve button → sets `approved: true`
+- Delete button
+
+-----
+
+## STEP 7 — WHATSAPP FLOATING BUTTON (All Pages)
+
+```jsx
+// WhatsAppButton.jsx
+export default function WhatsAppButton() {
+  return (
+    <a
+      href="https://wa.me/2349065314977"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-2xl transition-transform hover:scale-110"
+    >
+      <FaWhatsapp size={28} />
+    </a>
+  );
+}
+```
+
+Add `<WhatsAppButton />` in `App.jsx` outside all routes.
+
+-----
+
+## STEP 8 — ROUTING (App.jsx)
+
+```jsx
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+
+// Auth guard
+const PrivateRoute = ({ children }) => {
+  const { currentUser } = useAuthState(auth);
+  return currentUser ? children : <Navigate to="/admin/login" />;
+};
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Navbar />
+      <WhatsAppButton />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/services" element={<Services />} />
+        <Route path="/portfolio" element={<Portfolio />} />
+        <Route path="/reviews" element={<Reviews />} />
+        <Route path="/blog" element={<Blog />} />
+        <Route path="/blog/:slug" element={<BlogPost />} />
+        <Route path="/booking" element={<BookingPage />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin" element={<PrivateRoute><AdminDashboard /></PrivateRoute>} />
+        <Route path="/admin/projects" element={<PrivateRoute><AdminProjects /></PrivateRoute>} />
+        <Route path="/admin/blog" element={<PrivateRoute><AdminBlog /></PrivateRoute>} />
+      </Routes>
+      <Footer />
+    </BrowserRouter>
+  );
+}
+```
+
+-----
+
+## STEP 9 — FOOTER
+
+- Dark background (#0A0A0A)
+- 4 columns: Logo + tagline | Services links | Quick links | Contact info
+- Bottom bar: © 2025 Master Key Consulting. All rights reserved.
+- Red divider line above bottom bar
+- Gold accent on hover for links
+
+-----
+
+## STEP 10 — FIREBASE FIRESTORE SECURITY RULES
+
+```js
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Public can READ approved reviews and published projects/blog
+    match /reviews/{id} {
+      allow read: if resource.data.approved == true;
+      allow create: if true; // anyone can submit a review
+      allow update, delete: if request.auth != null;
+    }
+
+    match /projects/{id} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    match /blog/{id} {
+      allow read: if resource.data.published == true;
+      allow write: if request.auth != null;
+    }
+
+    match /bookings/{id} {
+      allow create: if true; // public can submit bookings
+      allow read, update, delete: if request.auth != null;
+    }
+  }
+}
+```
+
+-----
+
+## STEP 11 — FIREBASE STORAGE RULES
+
+```js
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+  }
+}
+```
+
+-----
+
+## STEP 12 — DEPLOYMENT (Vercel)
+
+```bash
+# Build
+npm run build
+
+# Install Vercel CLI
+npm install -g vercel
+
+# Deploy
+vercel
+
+# Add environment variables in Vercel dashboard:
+# Settings → Environment Variables → paste all from .env
+```
+
+**Live URL will be:** `https://masterkey-consulting.vercel.app`
+
+**For custom domain later:** Point a domain to Vercel in Settings → Domains (if client buys domain in future).
+
+-----
+
+## ANIMATIONS GUIDE (Framer Motion)
+
+Use these patterns consistently:
+
+```jsx
+// Fade up on scroll
+<motion.div
+  initial={{ opacity: 0, y: 40 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.6, delay: index * 0.1 }}
+  viewport={{ once: true }}
+>
+
+// Stagger children
+const container = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.1 } }
+};
+
+// Card hover
+<motion.div whileHover={{ y: -6, boxShadow: "0 20px 40px rgba(204,0,0,0.15)" }}>
+```
+
+-----
+
+## SEO SETUP
+
+Add to `index.html`:
+
+```html
+<title>Master Key Consulting | Geophysical & Engineering Services in Nigeria</title>
+<meta name="description" content="Professional geophysical surveys, mineral exploration, borehole drilling, and geotechnical investigation services in Nigeria. Based in Ilorin, Kwara State." />
+<meta name="keywords" content="geophysical survey Nigeria, mineral exploration Kwara, borehole drilling Ilorin, geology consulting Nigeria" />
+<meta property="og:title" content="Master Key Consulting" />
+<meta property="og:description" content="Geophysical and Engineering Services — Nigeria" />
+<meta property="og:image" content="/assets/logo.png" />
+```
+
+-----
+
+## COMPLETE FEATURE CHECKLIST
+
+- [x] Landing page with hero, stats, services preview, portfolio preview, testimonials, blog preview, CTA
+- [x] Full services page with detail per service + booking CTA
+- [x] Portfolio page with filter tabs + modal view
+- [x] Reviews page — public display + submission form
+- [x] Blog — list + individual post page
+- [x] Booking form — saves to Firestore + sends email to client via EmailJS
+- [x] Contact page with Google Maps embed + direct form
+- [x] WhatsApp floating button on all pages
+- [x] Admin login (Firebase Auth)
+- [x] Admin dashboard — bookings, projects, blog, reviews
+- [x] Image uploads via Firebase Storage
+- [x] Mobile responsive (all breakpoints)
+- [x] Framer Motion page animations
+- [x] Brand colors: Red + Gold + Black (from business card)
+- [x] Free hosting on Vercel
+- [x] No payment gateway (booking is inquiry-only, payment settled offline)
+- [x] Firestore security rules (public can submit, admin manages)
+- [x] SEO meta tags
+
+-----
+
+## TOTAL COST TO RUN
+
+|Item                                 |Cost                          |
+|-------------------------------------|------------------------------|
+|Vercel Hosting                       |₦0 / Free                     |
+|Firebase (Firestore + Auth + Storage)|₦0 / Free tier                |
+|EmailJS (200 emails/month)           |₦0 / Free                     |
+|Domain                               |₦0 (use .vercel.app subdomain)|
+|**TOTAL**                            |**₦0 forever**                |
+
+-----
+
+*Built for Master Key Consulting — Muhammad Abdulrahman Alata, Geologist*
+*Ilorin, Kwara State, Nigeria*
+*Generated via Devtec Technology*
