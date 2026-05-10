@@ -1,8 +1,9 @@
 import { Link } from "wouter";
-import { motion } from "framer-motion";
-import { ChevronDown, MapPin, Star, ArrowRight, CheckCircle2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronDown, ChevronLeft, ChevronRight, MapPin, Star, ArrowRight, CheckCircle2, Quote } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useListFeaturedProjects, useListReviews, useListBlogPosts } from "@workspace/api-client-react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import heroBg from "@/assets/images/hero-bg.png";
 import blog1 from "@/assets/images/blog-1.png";
 import blog2 from "@/assets/images/blog-2.png";
@@ -48,8 +49,41 @@ export default function Home() {
   const { data: reviews } = useListReviews();
   const { data: blogPosts } = useListBlogPosts();
 
-  const topReviews = (reviews ?? []).slice(0, 3);
+  const allReviews = reviews ?? [];
   const topBlog = (blogPosts ?? []).slice(0, 3);
+
+  const [activeIdx, setActiveIdx] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [direction, setDirection] = useState(1);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const goTo = useCallback((idx: number, dir: number) => {
+    setDirection(dir);
+    setActiveIdx(idx);
+  }, []);
+
+  const prev = useCallback(() => {
+    if (allReviews.length === 0) return;
+    goTo((activeIdx - 1 + allReviews.length) % allReviews.length, -1);
+  }, [activeIdx, allReviews.length, goTo]);
+
+  const next = useCallback(() => {
+    if (allReviews.length === 0) return;
+    goTo((activeIdx + 1) % allReviews.length, 1);
+  }, [activeIdx, allReviews.length, goTo]);
+
+  useEffect(() => {
+    if (paused || allReviews.length <= 1) return;
+    intervalRef.current = setInterval(() => {
+      setDirection(1);
+      setActiveIdx((i) => (i + 1) % allReviews.length);
+    }, 5000);
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+  }, [paused, allReviews.length]);
+
+  useEffect(() => {
+    if (activeIdx >= allReviews.length && allReviews.length > 0) setActiveIdx(0);
+  }, [allReviews.length, activeIdx]);
 
   return (
     <div className="w-full">
@@ -392,10 +426,20 @@ export default function Home() {
         </section>
       )}
 
-      {/* Testimonials */}
-      {topReviews.length > 0 && (
-        <section className="py-24 bg-[#F5F5F5]" data-testid="section-reviews">
-          <div className="container mx-auto px-4">
+      {/* Testimonials Carousel */}
+      {allReviews.length > 0 && (
+        <section
+          className="py-24 bg-[#0A0A0A] relative overflow-hidden"
+          data-testid="section-reviews"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+        >
+          {/* Subtle diagonal pattern */}
+          <div className="absolute inset-0 opacity-5"
+            style={{ backgroundImage: "repeating-linear-gradient(45deg, #CC0000 0, #CC0000 1px, transparent 0, transparent 50%)", backgroundSize: "20px 20px" }} />
+
+          <div className="relative container mx-auto px-4">
+            {/* Header */}
             <motion.div
               className="text-center mb-16"
               initial="hidden"
@@ -403,49 +447,125 @@ export default function Home() {
               viewport={{ once: true }}
               variants={stagger}
             >
-              <motion.span variants={fadeUp} className="font-label text-primary text-sm uppercase tracking-[0.3em]">Testimonials</motion.span>
-              <motion.h2 variants={fadeUp} className="font-heading font-bold text-4xl md:text-5xl mt-2 text-[#0A0A0A]">What Clients Say</motion.h2>
+              <motion.span variants={fadeUp} className="font-label text-accent text-sm uppercase tracking-[0.3em]">Testimonials</motion.span>
+              <motion.h2 variants={fadeUp} className="font-heading font-bold text-4xl md:text-5xl mt-2 text-white">What Clients Say</motion.h2>
             </motion.div>
-            <motion.div
-              className="grid grid-cols-1 md:grid-cols-3 gap-8"
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true }}
-              variants={stagger}
-            >
-              {topReviews.map((review) => (
-                <motion.div
-                  key={review.id}
-                  variants={fadeUp}
-                  className="bg-white p-8 border-t-4 border-primary shadow-sm"
-                  data-testid={`card-review-${review.id}`}
-                >
-                  <div className="flex gap-1 mb-4">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star
-                        key={i}
-                        className={`w-5 h-5 ${i < review.rating ? "fill-accent text-accent" : "text-gray-300"}`}
-                      />
-                    ))}
-                  </div>
-                  <p className="text-[#1A1A1A] leading-relaxed mb-6 italic">"{review.comment}"</p>
-                  <div>
-                    <div className="font-label font-bold text-sm uppercase tracking-wider text-[#0A0A0A]">{review.name}</div>
-                    <div className="text-muted-foreground text-xs mt-1">{review.location} · {review.service}</div>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-            <motion.div
-              className="text-center mt-12"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-            >
-              <Link href="/reviews" className="text-primary font-bold uppercase tracking-wider hover:text-accent flex items-center gap-2 justify-center transition-colors">
-                See All Reviews <ArrowRight className="w-5 h-5" />
+
+            {/* Carousel stage */}
+            <div className="relative max-w-3xl mx-auto">
+              {/* Quote icon */}
+              <div className="flex justify-center mb-8">
+                <div className="w-14 h-14 bg-primary flex items-center justify-center">
+                  <Quote className="w-7 h-7 text-white fill-white" />
+                </div>
+              </div>
+
+              {/* Slide */}
+              <div className="relative min-h-[260px] flex items-center">
+                <AnimatePresence mode="wait" custom={direction}>
+                  {(() => {
+                    const review = allReviews[activeIdx];
+                    if (!review) return null;
+                    return (
+                      <motion.div
+                        key={review.id}
+                        custom={direction}
+                        initial={{ opacity: 0, x: direction * 60 }}
+                        animate={{ opacity: 1, x: 0, transition: { duration: 0.45, ease: "easeOut" } }}
+                        exit={{ opacity: 0, x: direction * -60, transition: { duration: 0.3, ease: "easeIn" } }}
+                        className="w-full text-center px-4"
+                        data-testid={`carousel-review-${review.id}`}
+                      >
+                        {/* Stars */}
+                        <div className="flex gap-2 justify-center mb-6">
+                          {Array.from({ length: 5 }).map((_, i) => (
+                            <Star
+                              key={i}
+                              className={`w-6 h-6 ${i < review.rating ? "fill-accent text-accent" : "text-white/20"}`}
+                            />
+                          ))}
+                        </div>
+
+                        {/* Quote text */}
+                        <p className="text-white text-xl md:text-2xl leading-relaxed italic font-light mb-8 max-w-2xl mx-auto">
+                          "{review.comment}"
+                        </p>
+
+                        {/* Attribution */}
+                        <div>
+                          <div className="font-label font-bold text-sm uppercase tracking-[0.2em] text-accent">
+                            {review.name}
+                          </div>
+                          <div className="text-white/50 text-xs mt-2 font-label uppercase tracking-wider">
+                            {review.location} · {review.service}
+                          </div>
+                        </div>
+                      </motion.div>
+                    );
+                  })()}
+                </AnimatePresence>
+              </div>
+
+              {/* Prev / Next arrows */}
+              {allReviews.length > 1 && (
+                <>
+                  <button
+                    onClick={prev}
+                    aria-label="Previous review"
+                    className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-12 w-10 h-10 border border-white/20 flex items-center justify-center text-white hover:bg-primary hover:border-primary transition-all duration-200 hidden md:flex"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={next}
+                    aria-label="Next review"
+                    className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-12 w-10 h-10 border border-white/20 flex items-center justify-center text-white hover:bg-primary hover:border-primary transition-all duration-200 hidden md:flex"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                </>
+              )}
+            </div>
+
+            {/* Dot indicators */}
+            {allReviews.length > 1 && (
+              <div className="flex gap-2 justify-center mt-10">
+                {allReviews.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => goTo(i, i > activeIdx ? 1 : -1)}
+                    aria-label={`Go to review ${i + 1}`}
+                    className={`transition-all duration-300 rounded-none ${
+                      i === activeIdx
+                        ? "w-8 h-2 bg-accent"
+                        : "w-2 h-2 bg-white/30 hover:bg-white/60"
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* Mobile arrows */}
+            {allReviews.length > 1 && (
+              <div className="flex gap-4 justify-center mt-6 md:hidden">
+                <button onClick={prev} className="w-10 h-10 border border-white/20 flex items-center justify-center text-white hover:bg-primary transition-all">
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+                <button onClick={next} className="w-10 h-10 border border-white/20 flex items-center justify-center text-white hover:bg-primary transition-all">
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </div>
+            )}
+
+            {/* Review counter + CTA */}
+            <div className="text-center mt-12 flex flex-col items-center gap-4">
+              <span className="text-white/40 text-xs font-label uppercase tracking-wider">
+                {activeIdx + 1} of {allReviews.length} reviews
+              </span>
+              <Link href="/reviews" className="text-accent font-bold uppercase tracking-wider hover:text-white flex items-center gap-2 transition-colors text-sm">
+                See All Reviews & Leave Yours <ArrowRight className="w-4 h-4" />
               </Link>
-            </motion.div>
+            </div>
           </div>
         </section>
       )}
