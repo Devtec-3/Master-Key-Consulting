@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Star } from "lucide-react";
 import { useListReviews, useCreateReview, getListReviewsQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useSEO } from "@/hooks/useSEO";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -39,6 +40,11 @@ const fadeUp = {
 };
 
 export default function Reviews() {
+  useSEO({
+    title: "Client Reviews & Testimonials",
+    description: "Read what clients across Nigeria say about Master Key Consulting's geophysical surveys, borehole drilling, and engineering services — and leave your own review.",
+  });
+
   const { data: reviews, isLoading } = useListReviews();
   const createReview = useCreateReview();
   const queryClient = useQueryClient();

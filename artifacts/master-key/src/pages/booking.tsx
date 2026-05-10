@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Phone, Mail, Clock } from "lucide-react";
 import { SiWhatsapp } from "react-icons/si";
 import { useCreateBooking } from "@workspace/api-client-react";
+import { useSEO } from "@/hooks/useSEO";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -51,6 +52,11 @@ const fadeUp = {
 };
 
 export default function Booking() {
+  useSEO({
+    title: "Book a Geophysical or Engineering Service",
+    description: "Submit a booking request for any of Master Key Consulting's services — geophysical surveys, borehole drilling, mineral exploration, and more. Muhammad will respond within 24 hours.",
+  });
+
   const search = useSearch();
   const params = new URLSearchParams(search);
   const preselectedService = params.get("service") ?? "";

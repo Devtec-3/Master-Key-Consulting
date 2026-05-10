@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Phone, Mail, MapPin } from "lucide-react";
 import { SiWhatsapp } from "react-icons/si";
 import { useState } from "react";
+import { useSEO } from "@/hooks/useSEO";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -26,6 +27,11 @@ const fadeUp = {
 };
 
 export default function Contact() {
+  useSEO({
+    title: "Contact Us — Ilorin, Kwara State, Nigeria",
+    description: "Get in touch with Master Key Consulting. Call, WhatsApp, or email our team in Ilorin, Kwara State, Nigeria, or use the contact form and we'll respond within 24 hours.",
+  });
+
   const { toast } = useToast();
   const [sent, setSent] = useState(false);
 

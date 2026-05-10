@@ -2,6 +2,7 @@ import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { CheckCircle2, MapPin, Phone, Mail, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useSEO } from "@/hooks/useSEO";
 import flyer from "@/assets/images/flyer.jpeg";
 import businessCard from "@/assets/images/business-card.jpeg";
 
@@ -36,6 +37,11 @@ const specialisations = [
 ];
 
 export default function About() {
+  useSEO({
+    title: "About Muhammad Abdulrahman Alata — Founder & Lead Geoscientist",
+    description: "Meet the expert behind Master Key Consulting. Muhammad Abdulrahman Alata is a certified geoscientist with years of experience in geophysical surveys, mineral exploration, and borehole engineering across Nigeria.",
+  });
+
   return (
     <div className="w-full">
       {/* Hero */}

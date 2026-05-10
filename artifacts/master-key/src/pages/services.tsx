@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { ChevronDown, ChevronUp, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { useSEO } from "@/hooks/useSEO";
 
 const services = [
   {
@@ -110,6 +111,11 @@ const stagger = {
 };
 
 export default function Services() {
+  useSEO({
+    title: "Our Services — Geophysical Surveys, Borehole Drilling & More",
+    description: "Master Key Consulting offers six core services: geophysical surveys, mineral resources exploration, mining of industrial minerals, borehole drilling, geotechnical investigations, and professional consultation.",
+  });
+
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (

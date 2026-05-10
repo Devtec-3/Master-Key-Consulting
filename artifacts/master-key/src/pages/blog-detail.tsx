@@ -5,11 +5,20 @@ import { SiWhatsapp, SiX } from "react-icons/si";
 import { useGetBlogPost } from "@workspace/api-client-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
+import { useSEO } from "@/hooks/useSEO";
 
 export default function BlogDetail() {
   const { slug } = useParams<{ slug: string }>();
   const { data: post, isLoading, isError } = useGetBlogPost(slug ?? "");
   const { toast } = useToast();
+
+  useSEO({
+    title: post?.title ?? "Blog Article",
+    description: post?.content
+      ? post.content.replace(/<[^>]+>/g, "").slice(0, 160).trimEnd() + "…"
+      : "Read the latest geophysical and engineering insights from Master Key Consulting.",
+    type: "article",
+  });
 
   if (isLoading) {
     return (

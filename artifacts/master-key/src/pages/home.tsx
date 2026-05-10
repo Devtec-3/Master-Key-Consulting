@@ -4,6 +4,7 @@ import { ChevronDown, ChevronLeft, ChevronRight, MapPin, Star, ArrowRight, Check
 import { Button } from "@/components/ui/button";
 import { useListFeaturedProjects, useListReviews, useListBlogPosts } from "@workspace/api-client-react";
 import { useState, useEffect, useCallback, useRef } from "react";
+import { useSEO } from "@/hooks/useSEO";
 import heroBg from "@/assets/images/hero-bg.png";
 import blog1 from "@/assets/images/blog-1.png";
 import blog2 from "@/assets/images/blog-2.png";
@@ -45,6 +46,11 @@ const stagger = {
 };
 
 export default function Home() {
+  useSEO({
+    title: "Professional Geophysical & Engineering Services in Nigeria",
+    description: "Master Key Consulting delivers accurate geophysical surveys, mineral exploration, borehole drilling, and geotechnical investigations across Nigeria from our base in Ilorin, Kwara State.",
+  });
+
   const { data: featuredProjects } = useListFeaturedProjects();
   const { data: reviews } = useListReviews();
   const { data: blogPosts } = useListBlogPosts();

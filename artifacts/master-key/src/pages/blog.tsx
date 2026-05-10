@@ -5,10 +5,16 @@ import { useListBlogPosts } from "@workspace/api-client-react";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useState } from "react";
+import { useSEO } from "@/hooks/useSEO";
 import blog1 from "@/assets/images/blog-1.png";
 import blog2 from "@/assets/images/blog-2.png";
 
 export default function Blog() {
+  useSEO({
+    title: "Field Updates & Geological Insights — Blog",
+    description: "Explore technical articles, field updates, and geological insights from Master Key Consulting's team of geoscientists and engineers working across Nigeria.",
+  });
+
   const { data: posts, isLoading } = useListBlogPosts();
   const [search, setSearch] = useState("");
 

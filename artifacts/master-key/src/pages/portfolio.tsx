@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useListProjects } from "@workspace/api-client-react";
 import type { Project } from "@workspace/api-client-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useSEO } from "@/hooks/useSEO";
 
 const filters = ["All", "Geophysical Survey", "Borehole Drilling", "Mineral Resources Exploration", "Geotechnical Investigation", "Mining"];
 
@@ -13,6 +14,11 @@ const fadeUp = {
 };
 
 export default function Portfolio() {
+  useSEO({
+    title: "Project Portfolio — Completed Geophysical & Engineering Projects",
+    description: "Browse Master Key Consulting's portfolio of completed geophysical surveys, borehole drilling installations, mineral exploration projects, and geotechnical investigations across Nigeria.",
+  });
+
   const [activeFilter, setActiveFilter] = useState("All");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
