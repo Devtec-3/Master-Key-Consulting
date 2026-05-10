@@ -140,6 +140,15 @@ export interface AdminLoginResult {
   authenticated: boolean;
 }
 
+export interface MessageResult {
+  message: string;
+}
+
+export interface ResetPasswordBody {
+  token: string;
+  newPassword: string;
+}
+
 export type ListProjectsParams = {
   serviceType?: string;
 };

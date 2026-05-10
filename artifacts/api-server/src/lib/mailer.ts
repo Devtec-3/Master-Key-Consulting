@@ -121,6 +121,73 @@ Reply to: ${booking.email}
   logger.info({ bookingId: booking.id, to: ADMIN_EMAIL }, "Booking notification email sent");
 }
 
+export async function sendPasswordResetEmail(resetUrl: string): Promise<void> {
+  const t = getTransporter();
+  if (!t) {
+    logger.warn("Email not configured — skipping password reset email");
+    return;
+  }
+
+  const html = `
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<style>
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 0; }
+  .wrapper { max-width: 600px; margin: 32px auto; background: #fff; border-top: 6px solid #CC0000; }
+  .header { background: #0A0A0A; padding: 24px 32px; }
+  .header h1 { color: #fff; margin: 0; font-size: 22px; letter-spacing: 1px; }
+  .header span { color: #C9A84C; font-size: 13px; text-transform: uppercase; letter-spacing: 2px; }
+  .body { padding: 32px; }
+  .notice { background: #fff8e1; border-left: 4px solid #C9A84C; padding: 14px 18px; font-size: 14px; color: #555; margin-bottom: 24px; }
+  .btn { display: inline-block; background: #CC0000; color: #fff; padding: 14px 32px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; font-size: 14px; text-decoration: none; margin-top: 16px; }
+  .url { font-size: 12px; color: #999; word-break: break-all; margin-top: 16px; }
+  .footer { background: #0A0A0A; padding: 16px 32px; font-size: 12px; color: #666; }
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="header">
+    <span>Master Key Consulting</span>
+    <h1>PASSWORD RESET REQUEST</h1>
+  </div>
+  <div class="body">
+    <p style="font-size:15px;color:#333;">You requested a password reset for the Master Key Consulting admin panel. Click the button below to set a new password.</p>
+    <div class="notice">⏳ This link expires in <strong>1 hour</strong>. If you did not request this, you can safely ignore this email.</div>
+    <a class="btn" href="${resetUrl}">Reset My Password</a>
+    <p class="url">Or paste this link in your browser:<br />${resetUrl}</p>
+  </div>
+  <div class="footer">Master Key Consulting · Ilorin, Kwara State, Nigeria</div>
+</div>
+</body>
+</html>
+`;
+
+  const text = `
+PASSWORD RESET — Master Key Consulting Admin Panel
+===================================================
+
+You requested a password reset. Click or paste this link in your browser:
+
+${resetUrl}
+
+This link expires in 1 hour.
+
+If you did not request a password reset, ignore this email.
+`;
+
+  await t.sendMail({
+    from: `"Master Key Consulting" <${GMAIL_USER}>`,
+    to: ADMIN_EMAIL,
+    subject: "🔐 Admin Password Reset — Master Key Consulting",
+    text,
+    html,
+  });
+
+  logger.info({ to: ADMIN_EMAIL }, "Password reset email sent");
+}
+
 export interface ReviewNotificationData {
   id: number;
   name: string;

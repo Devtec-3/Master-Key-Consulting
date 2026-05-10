@@ -369,3 +369,22 @@ export const AdminLoginResponse = zod.object({
 export const GetAdminMeResponse = zod.object({
   authenticated: zod.boolean(),
 });
+
+/**
+ * @summary Send password reset link to admin email
+ */
+export const AdminForgotPasswordResponse = zod.object({
+  message: zod.string(),
+});
+
+/**
+ * @summary Reset admin password using a valid token
+ */
+export const AdminResetPasswordBody = zod.object({
+  token: zod.string(),
+  newPassword: zod.string(),
+});
+
+export const AdminResetPasswordResponse = zod.object({
+  message: zod.string(),
+});

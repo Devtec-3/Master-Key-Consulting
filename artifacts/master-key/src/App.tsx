@@ -14,8 +14,10 @@ import BlogDetail from "@/pages/blog-detail";
 import Booking from "@/pages/booking";
 import Contact from "@/pages/contact";
 
+import About from "@/pages/about";
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import AdminLogin from "@/pages/admin/login";
+import AdminResetPassword from "@/pages/admin/reset-password";
 import AdminDashboard from "@/pages/admin/dashboard";
 import AdminBookings from "@/pages/admin/bookings";
 import AdminProjects from "@/pages/admin/projects";
@@ -29,6 +31,9 @@ function Router() {
     <Switch>
       <Route path="/admin/login">
         <AdminLogin />
+      </Route>
+      <Route path="/admin/reset-password">
+        <AdminResetPassword />
       </Route>
       <Route path="/admin">
         <AdminLayout><AdminDashboard /></AdminLayout>
@@ -48,6 +53,9 @@ function Router() {
       
       <Route path="/">
         <PublicLayout><Home /></PublicLayout>
+      </Route>
+      <Route path="/about">
+        <PublicLayout><About /></PublicLayout>
       </Route>
       <Route path="/services">
         <PublicLayout><Services /></PublicLayout>

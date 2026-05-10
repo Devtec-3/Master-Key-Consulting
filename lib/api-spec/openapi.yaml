@@ -462,6 +462,42 @@ paths:
         "401":
           description: Not authenticated
 
+  /admin/forgot-password:
+    post:
+      operationId: adminForgotPassword
+      tags: [admin]
+      summary: Send password reset link to admin email
+      responses:
+        "200":
+          description: Reset link sent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResult"
+        "503":
+          description: Email not configured
+
+  /admin/reset-password:
+    post:
+      operationId: adminResetPassword
+      tags: [admin]
+      summary: Reset admin password using a valid token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResetPasswordBody"
+      responses:
+        "200":
+          description: Password reset successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResult"
+        "400":
+          description: Invalid or expired token
+
 components:
   schemas:
     HealthStatus:
@@ -714,3 +750,19 @@ components:
       properties:
         authenticated:
           type: boolean
+
+    MessageResult:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
+
+    ResetPasswordBody:
+      type: object
+      required: [token, newPassword]
+      properties:
+        token:
+          type: string
+        newPassword:
+          type: string
