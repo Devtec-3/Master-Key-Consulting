@@ -3,7 +3,8 @@ import { HealthCheckResponse } from "@workspace/api-zod";
 
 const router: IRouter = Router();
 
-router.get("/healthz", (_req, res) => {
+// FIX: Added ': any' to _req and res
+router.get("/healthz", (_req: any, res: any) => {
   const data = HealthCheckResponse.parse({ status: "ok" });
   res.json(data);
 });
