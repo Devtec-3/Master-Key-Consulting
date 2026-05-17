@@ -9,3 +9,4 @@ router.get("/healthz", (_req: any, res: any) => {
 });
 
 export default router;
+
