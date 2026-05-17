@@ -1,7 +1,7 @@
 import express, { type Express } from "express";
 import cors from "cors";
 import session from "express-session";
-import pinoHttp = require("pino-http");
+import pinoHttp = require("pino-http"); // FIX 1: Use require for pino-http
 import router from "./routes";
 import { logger } from "./lib/logger";
 
@@ -11,14 +11,14 @@ app.use(
   pinoHttp({
     logger,
     serializers: {
-      req(req) {
+      req(req: any) { // FIX 2: Explicitly type req as 'any'
         return {
           id: req.id,
           method: req.method,
           url: req.url?.split("?")[0],
         };
       },
-      res(res) {
+      res(res: any) { // FIX 3: Explicitly type res as 'any'
         return {
           statusCode: res.statusCode,
         };
